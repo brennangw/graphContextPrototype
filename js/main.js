@@ -1,149 +1,48 @@
-var data = {};
-data[1] = {
-    type: 'doughnut',
-    data: { labels: [ "F-150", "Mustang", "Flex", "Fusion" ],
-            datasets: [
-            {
-                data: [26, 19, 37, 18],
-                backgroundColor: [
-                    "red",
-                    "blue",
-                    "yellow",
-                    "purple"
-                ],
-                hoverBackgroundColor: [
-                    "red",
-                    "blue",
-                    "yellow",
-                    "purple"
-                ]
-            }]
-        },
-    option: {
-        animation:{
-            animateScale:true
-        }
-    }
-};
-data[2] = {
-    type: 'doughnut',
-    data: { labels: [ "F-150", "Mustang", "Flex", "Fusion" ],
-        datasets: [
-            {
-                data: [3, 37, 21, 39],
-                backgroundColor: [
-                    "red",
-                    "blue",
-                    "yellow",
-                    "purple"
-                ],
-                hoverBackgroundColor: [
-                    "red",
-                    "blue",
-                    "yellow",
-                    "purple"
-                ]
-            }]
-    },
-    option: {
-        animation:{
-            animateScale:true
-        }
-    }
-};
-data[3] = {
-    type: 'doughnut',
-    data: { labels: [ "F-150", "Mustang", "Flex", "Fusion" ],
-        datasets: [
-            {
-                data: [18, 44, 16, 22],
-                backgroundColor: [
-                    "red",
-                    "blue",
-                    "yellow",
-                    "purple"
-                ],
-                hoverBackgroundColor: [
-                    "red",
-                    "blue",
-                    "yellow",
-                    "purple"
-                ]
-            }]
-    },
-    option: {
-        animation:{
-            animateScale:true
-        }
-    }
-};
-data[4] = {
-    type: 'doughnut',
-    data: { labels: [ "F-150", "Mustang", "Flex", "Fusion" ],
-        datasets: [
-            {
-                data: [23, 7, 38, 32],
-                backgroundColor: [
-                    "red",
-                    "blue",
-                    "yellow",
-                    "purple"
-                ],
-                hoverBackgroundColor: [
-                    "red",
-                    "blue",
-                    "yellow",
-                    "purple"
-                ]
-            }]
-    },
-    option: {
-        animation:{
-            animateScale:true
-        }
-    }
-};
-
-for (var key in data) {
-    $("#graphs").append("<canvas id=\"" + key + "\"></canvas>")
-    var ctx = $("#" + key).get(0).getContext("2d");
-    var activeChart = new Chart(ctx, data[key]);
-    $('canvas').hide();
-}
-
-
 var transitions = {};
 for (var i = 1; i < 5; i++) {
-    transitions[i] = {}
-    for (var j = 1; j < 5; j++) {
-        transitions[i][j] = 0;
+        transitions[i] = {}
+        for (var j = 1; j < 5; j++) {
+            transitions[i][j] = 0;
+        }
     }
-}
 var currentDealership = 1;
 var firstSelection = true;
 
 $( document ).ready(function() {
+    
+    createGraphs(); //from dataAndGraphs.js
+
     $( ".dealershipSelector" ).click(function() {
 
+        //show new graph hide the others.
         var newId = Number($(this)[0]['dataset'].dealershipId);
         $('h1').text("Dealership " + newId);
         $('canvas').hide();
         $('#' + newId).show();
 
+        //the rest of the function is context
+        //so the first "transition" should be ignored as 
+        //it is not from anything
         if (firstSelection) {
             currentDealership = newId;
             firstSelection = false;
             return;
         }
 
+        //updated the transition table
         transitions[currentDealership][newId] += 1;
+        
+        
+        //get a ranking for other graphs as context
+        //based on the TT values.
+        
+
         var contextDict = {};
 
         for (let i = 1; i < 5; i++) {
             contextDict[i] = 0;
         }
 
-        // console.log(contextDict);
 
         for (let i = 1; i < 5; i++) {
             for (let j = 1; j < 5; j++) {
@@ -174,10 +73,10 @@ $( document ).ready(function() {
 
         var mostRelevantComparison = contextArr[0].id;
 
+        
         //compare the two data sets.
         //mostReleventComparison and newID
-
-
+        //to find the biggest diffrence by category between them.
         var biggestDiffDataIndex = {
             'index':0,
             'absDiff': Math.abs(data[newId].data.datasets[0].data[0] - data[mostRelevantComparison].data.datasets[0].data[0]),
@@ -194,6 +93,7 @@ $( document ).ready(function() {
             }
         }
 
+        //generate messages for the diffrence (this is the "context"). 
         if (biggestDiffDataIndex.absDiff < 12) {
             var string = "Dealership "+ newId + " and dealership " + mostRelevantComparison + " seem about the same."
         } else if (biggestDiffDataIndex.diff < 0) {
