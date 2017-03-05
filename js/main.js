@@ -124,14 +124,56 @@ var currentDealership = 1;
 
 $( document ).ready(function() {
     $( ".dealershipSelector" ).click(function() {
-        // console.log($(this).dataset["dealershipId"]);
-        var id = $(this)[0]['dataset'].dealershipId;
-        console.log(id);
-        $('h1').text("Dealership " + id);
+        var newId = Number($(this)[0]['dataset'].dealershipId);
+        $('h1').text("Dealership " + newId);
         $('canvas').hide();
-        $('#' + id).show();
-        transitions[currentDealership][id] += 1;
-        currentDealership = id;
+        $('#' + newId).show();
+        transitions[currentDealership][newId] += 1;
+        var contextDict = {};
+
+        for (let i = 1; i < 5; i++) {
+            contextDict[i] = 0;
+        }
+
+        // console.log(contextDict);
+
+        for (let i = 1; i < 5; i++) {
+            for (let j = 1; j < 5; j++) {
+                //transitions from the new frame
+                if (i === newId && j !== newId) {
+                    contextDict[j] += Number(transitions[i][j]) / 2;
+                //transitions to the new frame
+                } else if (i !== newId && j === newId) {
+                    contextDict[i] += Number(transitions[i][j]);
+                }
+            }
+        }
+        //bonus for the frame being tansitioned from.
+        contextDict[currentDealership] *= 1.2;
+
+        var contextArr = [];
+        for (let i = 1; i < 5; i++) {
+            if (i !== newId) {
+                contextArr.push({"id": i, "connectionValue": contextDict[i]});
+            }
+        }
+
+         contextArr.sort(function (a , b) {
+            return Number(a['connectionValue']) - Number(b['connectionValue']);
+        });
+
+        contextArr.reverse();
+
+        var mostReleventComparison = contextArr[0].id;
+
+        currentDealership = newId;
+
+
+        //compare the two data sets.
+
+
+
+
     });
 
     $( "#TTT" ).click(function() {
