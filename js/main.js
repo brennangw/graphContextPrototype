@@ -195,13 +195,13 @@ $( document ).ready(function() {
         }
 
         if (biggestDiffDataIndex.absDiff < 12) {
-            var string = "Dealership "+ newId + " and dealership " + currentDealership + " seem about the same."
+            var string = "Dealership "+ newId + " and dealership " + mostRelevantComparison + " seem about the same."
         } else if (biggestDiffDataIndex.diff < 0) {
             var string = ("Dealership "+ newId + " has a lot less sales for " +
-                data[4].data.labels[biggestDiffDataIndex.index] + "s than dealership " + currentDealership);
+                data[4].data.labels[biggestDiffDataIndex.index] + "s than dealership " + mostRelevantComparison);
         } else {
             var string = ("Dealership "+ newId + " has a lot more sales for " +
-            data[4].data.labels[biggestDiffDataIndex.index] + "s than dealership " + currentDealership);
+            data[4].data.labels[biggestDiffDataIndex.index] + "s than dealership " + mostRelevantComparison);
         }
 
         $("#contextMessage").text(string);
